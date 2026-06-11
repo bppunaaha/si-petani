@@ -1,0 +1,28 @@
+/* SI-PETANI Penyuluh — service worker sederhana (cache shell agar bisa di-install) */
+const CACHE = 'sipetani-penyuluh-v1';
+const SHELL = ['app.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+
+self.addEventListener('install', function (e) {
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
+});
+
+self.addEventListener('activate', function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+    }).then(function () { return self.clients.claim(); })
+  );
+});
+
+self.addEventListener('fetch', function (e) {
+  var url = e.request.url;
+  // Hanya tangani berkas shell di origin ini; konten aplikasi (script.google.com) selalu online.
+  if (e.request.method !== 'GET' || url.indexOf('script.google') >= 0 || url.indexOf('google.com') >= 0) return;
+  e.respondWith(
+    fetch(e.request).then(function (resp) {
+      var copy = resp.clone();
+      caches.open(CACHE).then(function (c) { try { c.put(e.request, copy); } catch (x) {} });
+      return resp;
+    }).catch(function () { return caches.match(e.request); })
+  );
+});
