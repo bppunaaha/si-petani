@@ -515,33 +515,21 @@
         })(i);
       }
     })();
-
-    /* ===== SETUP URL ===== */
-    function setUrls(base){
-      base = String(base || '');
+    
+    /* URL langsung tanpa GAS */
+    (function(){
       var v = document.getElementById('optViewer');
       var e = document.getElementById('optEditor');
       var d = document.getElementById('optData');
       var note = document.getElementById('note');
 
-      if(!base){
-        if(note) note.innerHTML = '⚠️ Gagal menyiapkan tautan. Muat ulang halaman.';
-        return;
-      }
-      var sep = base.indexOf('?') >= 0 ? '&' : '?';
-      v.href = base;
-      e.href = base + sep + 'mode=editor';
-      d.href = base + sep + 'mode=data';
+      v.href = 'https://bppunaaha.github.io/si-petani/';
+      e.href = 'https://bppunaaha.github.io/si-petani/Editor.html';
+      d.href = 'https://bppunaaha.github.io/si-petani/app.html';
+
       [v, e, d].forEach(function(a){ a.classList.remove('disabled'); });
       if(note) note.innerHTML = '<span style="color:var(--green-500);font-size:14px">✓</span> <span>Pilih salah satu untuk melanjutkan.</span>';
-    }
-
-    try{
-      google.script.run
-        .withSuccessHandler(setUrls)
-        .withFailureHandler(function(){ setUrls(''); })
-        .getAppUrl();
-    } catch(err){ setUrls(''); }
+    })();
   </script>
 </body>
 </html>
