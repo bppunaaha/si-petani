@@ -312,6 +312,30 @@
     }
     .foot-sep{ opacity:.4; }
 
+    /* Tombol Install PWA */
+    #installWrap{
+      display:none; margin:12px 4px 0;
+    }
+    #installBtn{
+      width:100%; padding:13px 16px;
+      background:linear-gradient(135deg,var(--green-700),var(--green-600));
+      color:#fff; border:none; border-radius:14px;
+      font-family:inherit; font-size:14px; font-weight:800;
+      cursor:pointer; display:flex; align-items:center;
+      justify-content:center; gap:9px;
+      box-shadow:0 4px 16px rgba(31,92,46,.35);
+      transition:all .2s ease;
+    }
+    #installBtn:hover{
+      background:linear-gradient(135deg,var(--green-800),var(--green-700));
+      box-shadow:0 6px 22px rgba(31,92,46,.45);
+      transform:translateY(-1px);
+    }
+    #installHint{
+      text-align:center; font-size:10.5px;
+      color:var(--muted); margin-top:6px;
+    }
+    
     /* Versi tag */
     .ver{
       display:inline-block;
@@ -489,6 +513,15 @@
       </div>
     </div>
 
+    <!-- Tombol Install PWA -->
+    <div id="installWrap">
+      <button id="installBtn" onclick="installPWA()">
+        <span style="font-size:20px">📲</span>
+        <span>Instal Aplikasi di HP</span>
+      </button>
+      <div id="installHint">Instal sekali, buka kapan saja seperti aplikasi biasa</div>
+    </div>
+    
     <div class="foot">
       <span>BPP Unaaha 2026</span>
       <span class="foot-sep">·</span>
@@ -499,6 +532,31 @@
   </div>
 
   <script>
+    /* ===== TOMBOL INSTALL PWA ===== */
+    var _deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault();
+      _deferredPrompt = e;
+      document.getElementById('installWrap').style.display = 'block';
+    });
+
+    function installPWA(){
+      if(!_deferredPrompt) return;
+      _deferredPrompt.prompt();
+      _deferredPrompt.userChoice.then(function(result){
+        if(result.outcome === 'accepted'){
+          document.getElementById('installWrap').style.display = 'none';
+        }
+        _deferredPrompt = null;
+      });
+    }
+
+    window.addEventListener('appinstalled', function(){
+      document.getElementById('installWrap').style.display = 'none';
+      _deferredPrompt = null;
+    });
+    
     /* ===== PARTIKEL ANIMASI ===== */
     (function(){
       var container = document.getElementById('particles');
