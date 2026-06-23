@@ -4,47 +4,165 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>SI-PETANI — BPP Unaaha</title>
-<link rel="icon" href="https://files.catbox.moe/bpvotk.png">
+<link rel="icon" href="icon-192.png">
 <style>
-  html,body{ margin:0; height:100%; overflow:hidden; background:#10331C; font-family:system-ui,'Segoe UI',sans-serif; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; overflow:hidden; background:#0B2614; font-family:system-ui,'Segoe UI',sans-serif; }
   #frame{ position:fixed; inset:0; width:100%; height:100%; border:0; }
-  #splash{ position:fixed; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    background:linear-gradient(135deg,#163F22,#2C7A40); color:#fff; transition:opacity .5s ease; }
+
+  #splash{
+    position:fixed; inset:0; z-index:10;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden; transition:opacity .6s ease;
+  }
   #splash.hide{ opacity:0; pointer-events:none; }
-  #splash .logo{ width:74px; height:74px; border-radius:18px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,.3); }
-  #splash .logo svg{ width:46px; height:46px; }
-  #splash h1{ font-size:24px; margin:8px 0 0; letter-spacing:.5px; font-weight:800; }
-  #splash p{ margin:0; font-size:13px; opacity:.85; }
-  #splash .dots{ display:flex; gap:6px; margin-top:4px; }
-  #splash .dots i{ width:8px; height:8px; border-radius:50%; background:#F6C453; animation:b 1s infinite; }
-  #splash .dots i:nth-child(2){ animation-delay:.15s; } #splash .dots i:nth-child(3){ animation-delay:.3s; }
-  @keyframes b{ 0%,100%{ transform:translateY(0); opacity:.5; } 50%{ transform:translateY(-6px); opacity:1; } }
+
+  .splash-bg{
+    position:absolute; inset:0;
+    background:linear-gradient(155deg,#0B2614 0%,#163F22 45%,#1F5C2E 80%,#2C7A40 100%);
+  }
+  .splash-grid{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .splash-glow{
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(60,154,85,.22) 0%,transparent 70%);
+  }
+
+  .splash-content{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    animation:splashIn .8s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes splashIn{
+    from{ opacity:0; transform:translateY(20px); }
+    to{ opacity:1; transform:none; }
+  }
+
+  .splash-logo{
+    width:80px; height:80px; border-radius:20px;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 32px rgba(0,0,0,.35), 0 0 0 3px rgba(246,196,83,.3);
+    animation:logoPop .9s cubic-bezier(.2,.8,.2,1) .1s both;
+  }
+  @keyframes logoPop{
+    from{ transform:scale(.6) rotate(-10deg); opacity:0; }
+    to{ transform:none; opacity:1; }
+  }
+  .splash-logo svg{ width:50px; height:50px; }
+
+  .splash-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(246,196,83,.15);
+    border:1px solid rgba(246,196,83,.35);
+    border-radius:20px; padding:5px 14px;
+    font-size:10.5px; font-weight:800;
+    letter-spacing:.16em; text-transform:uppercase;
+    color:#F6C453;
+  }
+  .splash-badge .bdot{
+    width:6px; height:6px; border-radius:50%;
+    background:#F6C453;
+    animation:bdotBlink 1.4s ease-in-out infinite;
+  }
+  @keyframes bdotBlink{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
+
+  .splash-title{
+    font-size:32px; font-weight:800;
+    color:#fff; letter-spacing:-.02em;
+    text-shadow:0 2px 16px rgba(0,0,0,.3);
+    line-height:1; text-align:center;
+  }
+  .splash-sub{
+    font-size:13px; color:rgba(255,255,255,.7);
+    font-weight:500; letter-spacing:.02em;
+  }
+
+  .splash-progress{
+    width:160px; height:3px;
+    background:rgba(255,255,255,.12);
+    border-radius:3px; overflow:hidden; margin-top:4px;
+  }
+  .splash-progress-bar{
+    height:100%;
+    background:linear-gradient(90deg,#3C9A55,#F6C453);
+    border-radius:3px;
+    animation:progress 8s ease-out forwards;
+  }
+  @keyframes progress{
+    0%{width:0%;} 30%{width:45%;} 70%{width:75%;} 95%{width:92%;} 100%{width:100%;}
+  }
+
+  .splash-hint{
+    font-size:11px; color:rgba(255,255,255,.4);
+    animation:fadeHint 1s ease .5s both;
+  }
+  @keyframes fadeHint{ from{opacity:0;} to{opacity:1;} }
+
+  .spark{
+    position:absolute; border-radius:50%;
+    background:rgba(246,196,83,.12);
+    animation:sparkFloat linear infinite;
+    pointer-events:none;
+  }
+  @keyframes sparkFloat{
+    0%{transform:translateY(0) scale(1);opacity:0;}
+    10%{opacity:1;} 90%{opacity:.5;}
+    100%{transform:translateY(-100vh) scale(1.5);opacity:0;}
+  }
 </style>
 </head>
 <body>
-  <div id="splash">
-    <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1F5C2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/>
+
+<div id="splash">
+  <div class="splash-bg"></div>
+  <div class="splash-grid"></div>
+  <div class="splash-glow"></div>
+  <div id="sparks"></div>
+  <div class="splash-content">
+    <div class="splash-badge"><span class="bdot"></span> Peta Publik</div>
+    <div class="splash-logo">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,84 30,54 70,54" fill="#1F5C2E"/>
+        <circle cx="50" cy="42" r="23" fill="#1F5C2E"/>
+        <path d="M50,57 Q50,46 50,33" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="40" cy="41" rx="8.5" ry="4.2" fill="#fff" transform="rotate(-38 40 41)"/>
+        <ellipse cx="60" cy="38" rx="8.5" ry="4.2" fill="#fff" transform="rotate(38 60 38)"/>
       </svg>
     </div>
-    <h1>SI-PETANI</h1>
-    <p>Memuat peta… BPP Unaaha</p>
-    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="splash-title">SI-PETANI</div>
+    <div class="splash-sub">Peta Potensi Pertanian · BPP Unaaha</div>
+    <div class="splash-progress"><div class="splash-progress-bar"></div></div>
+    <div class="splash-hint">Memuat peta…</div>
   </div>
-  <iframe id="frame" allow="geolocation *; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
-<script>
-  /* ============================================================
-     GANTI tulisan di dalam tanda kutip di bawah ini dengan
-     URL /exec aplikasi Anda (dari Apps Script > Manage deployments).
-     Contoh: "https://script.google.com/macros/s/AKfycbz.../exec"
-     ============================================================ */
-  var APP_URL = "https://script.google.com/macros/s/AKfycbzhuBxUy4QQiwuRk8lWq8KAgG0h2aa66yQ395k12-63f2TaIKVKX-qQy6wTrz76NZDxrw/exec";
+</div>
 
+<iframe id="frame" allow="geolocation *; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+<script>
+  (function(){
+    var c=document.getElementById('sparks');
+    for(var i=0;i<16;i++){
+      var s=document.createElement('div'); s.className='spark';
+      var sz=3+Math.random()*8;
+      s.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(Math.random()*100)+'%;bottom:'+(Math.random()*40)+'%;animation-duration:'+(10+Math.random()*14)+'s;animation-delay:'+(Math.random()*10)+'s';
+      c.appendChild(s);
+    }
+  })();
+
+  var APP_URL = "https://script.google.com/macros/s/AKfycbzhuBxUy4QQiwuRk8lWq8KAgG0h2aa66yQ395k12-63f2TaIKVKX-qQy6wTrz76NZDxrw/exec";
   var f = document.getElementById('frame');
   f.src = APP_URL;
-  f.addEventListener('load', function(){ document.getElementById('splash').classList.add('hide'); });
-  setTimeout(function(){ document.getElementById('splash').classList.add('hide'); }, 9000);
+
+  function hideSplash(){
+    document.getElementById('splash').classList.add('hide');
+  }
+  f.addEventListener('load', function(){ setTimeout(hideSplash, 400); });
+  setTimeout(hideSplash, 9000);
 </script>
 </body>
 </html>
