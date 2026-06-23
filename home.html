@@ -4,49 +4,435 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>SI-PETANI</title>
-  <link rel="icon" href="https://files.catbox.moe/bpvotk.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!--
-    ====== GANTI 3 TAUTAN INI BILA URL REPO BERBEDA ======
-    Viewer (publik) : https://bppunaaha.github.io/si-petani/
-    Editor (penyuluh): https://bppunaaha.github.io/si-petani/Editor.html   (huruf E besar)
-    Mode Data (PWA) : https://bppunaaha.github.io/si-petani/app.html
-    Cari atribut href="..." di tiga tombol <a> di bawah lalu sesuaikan.
-    =======================================================
-  -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{ --green-900:#10331C; --green-800:#163F22; --green-700:#1F5C2E; --green-600:#2C7A40; --green-500:#3C9A55; --gold-soft:#F6C453; --cream:#FBF8F1; --paper:#fff; --ink:#16271C; --muted:#6E7F72; --line:#E7E3D8; }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; }
-    body{ font-family:'Plus Jakarta Sans',sans-serif; color:var(--ink); background:linear-gradient(135deg,var(--green-800),var(--green-600)); display:flex; align-items:center; justify-content:center; padding:20px; min-height:100vh; }
-    .card{ background:var(--cream); border-radius:22px; padding:26px 22px 20px; width:100%; max-width:400px; box-shadow:0 22px 60px rgba(0,0,0,.32); animation:rise .5s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes rise{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:none;} }
-    .brand{ text-align:center; margin-bottom:18px; }
-    .emblem{ width:64px; height:64px; margin:0 auto 12px; background:#fff; border-radius:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(0,0,0,.18); }
-    .emblem svg{ width:42px; height:42px; }
-    .kicker{ font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--green-600); font-weight:800; }
-    h1{ font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:30px; margin:4px 0 2px; letter-spacing:-.01em; }
-    .loc{ font-size:12px; color:var(--muted); margin:0; }
-    .opts{ display:flex; flex-direction:column; gap:11px; margin-top:4px; }
-    .opt{ display:flex; align-items:center; gap:13px; padding:15px 16px; border-radius:15px; text-decoration:none; color:var(--ink); border:1px solid var(--line); background:var(--paper); transition:.16s; }
-    .opt:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(16,51,28,.14); border-color:#D5E5D8; }
-    .opt.primary{ background:linear-gradient(135deg,var(--green-700),var(--green-600)); color:#fff; border-color:transparent; }
-    .opt .ic{ width:46px; height:46px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center; font-size:23px; background:#E8F1EA; }
-    .opt.primary .ic{ background:rgba(255,255,255,.18); }
-    .opt .tx{ flex:1; min-width:0; }
-    .opt .tt{ font-weight:800; font-size:15px; }
-    .opt .ds{ font-size:11.5px; opacity:.82; margin-top:1px; }
-    .opt .ar{ font-size:20px; opacity:.55; }
-    .foot{ text-align:center; font-size:11px; color:#9a9a8e; margin-top:16px; line-height:1.5; }
+    :root{
+      --green-900:#0B2614; --green-800:#163F22; --green-700:#1F5C2E;
+      --green-600:#2C7A40; --green-500:#3C9A55; --green-400:#52B36A;
+      --gold:#C9921A; --gold-soft:#F6C453; --gold-light:#FEF3C7;
+      --cream:#FBF8F1; --paper:#FFFFFF; --ink:#16271C; --muted:#6E7F72;
+      --line:#E7E3D8;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; }
+
+    body{
+      font-family:'Plus Jakarta Sans',sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* ===== LATAR FOTO PERTANIAN (SVG landscape) ===== */
+    .bg{
+      position:fixed; inset:0; z-index:0;
+      background:linear-gradient(160deg, #0B2614 0%, #1a4a28 40%, #2d7a42 75%, #3d9455 100%);
+      overflow:hidden;
+    }
+
+    /* Sawah SVG landscape */
+    .bg-landscape{
+      position:absolute; bottom:0; left:0; right:0;
+      width:100%; height:65%;
+    }
+
+    /* Animasi partikel cahaya */
+    .particles{ position:absolute; inset:0; overflow:hidden; }
+    .particle{
+      position:absolute;
+      border-radius:50%;
+      background:rgba(246,196,83,0.12);
+      animation:float linear infinite;
+    }
+
+    @keyframes float{
+      0%{ transform:translateY(0) scale(1); opacity:0; }
+      10%{ opacity:1; }
+      90%{ opacity:.6; }
+      100%{ transform:translateY(-100vh) scale(1.4); opacity:0; }
+    }
+
+    /* Grid tekstur halus */
+    .bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+      background-size:48px 48px;
+    }
+
+    /* ===== CARD UTAMA ===== */
+    .card{
+      position:relative; z-index:10;
+      width:100%; max-width:420px;
+      margin:16px;
+      animation:cardRise .7s cubic-bezier(.2,.8,.2,1) both;
+    }
+    @keyframes cardRise{
+      from{ opacity:0; transform:translateY(24px) scale(.97); }
+      to{ opacity:1; transform:none; }
+    }
+
+    /* Header hijau */
+    .card-head{
+      background:linear-gradient(135deg,var(--green-900) 0%,var(--green-800) 50%,#1d5430 100%);
+      border-radius:20px 20px 0 0;
+      padding:28px 24px 22px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .card-head::before{
+      content:"";
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse at 50% 0%, rgba(246,196,83,.18) 0%, transparent 65%);
+    }
+    .card-head::after{
+      content:"";
+      position:absolute; bottom:-1px; left:0; right:0; height:24px;
+      background:var(--cream);
+      clip-path:ellipse(55% 100% at 50% 100%);
+    }
+
+    /* Garis emas dekoratif */
+    .head-stripe{
+      position:absolute; top:0; left:50%; transform:translateX(-50%);
+      width:60px; height:3px;
+      background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);
+      border-radius:0 0 3px 3px;
+    }
+
+    /* Logo */
+    .emblem{
+      width:72px; height:72px;
+      margin:0 auto 14px;
+      background:#fff;
+      border-radius:18px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 6px 24px rgba(0,0,0,.28), 0 0 0 3px rgba(246,196,83,.3);
+      position:relative; z-index:1;
+      animation:emblemPop .8s cubic-bezier(.2,.8,.2,1) .15s both;
+    }
+    @keyframes emblemPop{
+      from{ transform:scale(.7) rotate(-8deg); opacity:0; }
+      to{ transform:none; opacity:1; }
+    }
+    .emblem svg{ width:46px; height:46px; }
+
+    .kicker{
+      font-size:9px; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--gold-soft); font-weight:700;
+      position:relative; z-index:1;
+      margin-bottom:4px;
+    }
+    .brand-name{
+      font-family:'Bricolage Grotesque',sans-serif;
+      font-weight:800; font-size:34px; line-height:1;
+      color:#fff; letter-spacing:-.02em;
+      position:relative; z-index:1;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+    .brand-sub{
+      font-size:11.5px; color:rgba(255,255,255,.75);
+      position:relative; z-index:1;
+      margin-top:5px; font-weight:500;
+    }
+
+    /* Badge instansi */
+    .badge-instansi{
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:20px;
+      padding:5px 12px;
+      margin-top:10px;
+      position:relative; z-index:1;
+      font-size:11px; font-weight:700; color:rgba(255,255,255,.9);
+      letter-spacing:.03em;
+    }
+    .badge-instansi .dot{
+      width:6px; height:6px; border-radius:50%;
+      background:var(--gold-soft);
+      animation:blink 2s ease-in-out infinite;
+    }
+    @keyframes blink{
+      0%,100%{ opacity:1; } 50%{ opacity:.3; }
+    }
+
+    /* Body card */
+    .card-body{
+      background:var(--cream);
+      border-radius:0 0 20px 20px;
+      padding:20px 18px 18px;
+      box-shadow:0 24px 64px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.2);
+    }
+
+    /* Divider emas */
+    .divider{
+      display:flex; align-items:center; gap:10px;
+      margin-bottom:16px;
+    }
+    .divider-line{ flex:1; height:1px; background:var(--line); }
+    .divider-text{
+      font-size:9.5px; font-weight:800; letter-spacing:.18em;
+      text-transform:uppercase; color:var(--muted);
+    }
+
+    /* Menu options */
+    .opts{ display:flex; flex-direction:column; gap:10px; }
+
+    .opt{
+      display:flex; align-items:center; gap:13px;
+      padding:14px 15px;
+      border-radius:14px;
+      text-decoration:none;
+      color:var(--ink);
+      border:1.5px solid var(--line);
+      background:var(--paper);
+      transition:all .22s cubic-bezier(.2,.8,.2,1);
+      position:relative; overflow:hidden;
+      animation:optSlide .5s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .opt:nth-child(1){ animation-delay:.25s; }
+    .opt:nth-child(2){ animation-delay:.35s; }
+    .opt:nth-child(3){ animation-delay:.45s; }
+
+    @keyframes optSlide{
+      from{ opacity:0; transform:translateX(-14px); }
+      to{ opacity:1; transform:none; }
+    }
+
+    .opt::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0; width:4px;
+      border-radius:14px 0 0 14px;
+      background:var(--green-500);
+      transform:scaleY(0);
+      transition:transform .22s ease;
+    }
+    .opt:hover::before{ transform:scaleY(1); }
+    .opt:hover{
+      transform:translateX(4px);
+      box-shadow:0 6px 20px rgba(31,92,46,.15);
+      border-color:#C5DBC9;
+      background:#FAFDF9;
+    }
+    .opt:active{ transform:translateX(4px) scale(.99); }
+
+    .opt.primary{
+      background:linear-gradient(135deg,var(--green-800) 0%,var(--green-700) 60%,var(--green-600) 100%);
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 4px 16px rgba(31,92,46,.35);
+    }
+    .opt.primary::before{ background:var(--gold-soft); }
+    .opt.primary:hover{
+      transform:translateX(4px);
+      box-shadow:0 8px 28px rgba(31,92,46,.45);
+      background:linear-gradient(135deg,var(--green-900) 0%,var(--green-800) 60%,var(--green-700) 100%);
+    }
+
+    /* Shimmer efek pada primary */
+    .opt.primary::after{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(105deg, transparent 40%, rgba(255,255,255,.08) 50%, transparent 60%);
+      animation:shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer{
+      0%{ transform:translateX(-100%); }
+      60%,100%{ transform:translateX(200%); }
+    }
+
+    .opt .ic{
+      width:44px; height:44px; border-radius:11px; flex:none;
+      display:flex; align-items:center; justify-content:center;
+      font-size:21px;
+      background:#EBF3EC;
+      position:relative; z-index:1;
+    }
+    .opt.primary .ic{
+      background:rgba(255,255,255,.16);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+    }
+
+    .opt .tx{ flex:1; min-width:0; position:relative; z-index:1; }
+    .opt .tt{ font-weight:800; font-size:14.5px; line-height:1.2; }
+    .opt .ds{ font-size:11px; opacity:.75; margin-top:2px; line-height:1.3; }
+
+    .opt .ar{
+      font-size:18px; opacity:.4; flex:none;
+      position:relative; z-index:1;
+      transition:transform .2s ease, opacity .2s;
+    }
+    .opt:hover .ar{ transform:translateX(3px); opacity:.7; }
+    .opt.primary .ar{ opacity:.6; }
+    .opt.primary:hover .ar{ opacity:1; }
+
+    .opt.disabled{ opacity:.45; pointer-events:none; }
+
+    /* Badge "BARU" */
+    .badge-new{
+      font-size:9px; font-weight:800; letter-spacing:.08em;
+      background:var(--gold-soft); color:#7A4F00;
+      padding:2px 7px; border-radius:20px;
+      margin-left:6px; vertical-align:middle;
+      text-transform:uppercase;
+    }
+
+    /* Status note */
+    .note{
+      text-align:center; font-size:11.5px; color:var(--muted);
+      margin:14px 4px 0; min-height:16px;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+    .note .spinner{
+      width:12px; height:12px; border-radius:50%;
+      border:2px solid var(--line);
+      border-top-color:var(--green-500);
+      animation:spin .8s linear infinite;
+      flex:none;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* Footer */
+    .foot{
+      text-align:center; font-size:10.5px; color:#9a9a8e;
+      margin-top:10px; line-height:1.5;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .foot-sep{ opacity:.4; }
+
+    /* Versi tag */
+    .ver{
+      display:inline-block;
+      font-size:9px; font-weight:700; letter-spacing:.1em;
+      background:#EBF3EC; color:var(--green-700);
+      padding:1px 7px; border-radius:8px;
+    }
   </style>
 </head>
 <body>
+
+  <!-- LATAR BELAKANG -->
+  <div class="bg">
+    <!-- Partikel animasi -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Landscape sawah SVG -->
+    <svg class="bg-landscape" viewBox="0 0 1440 420" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+      <!-- Langit-gunung -->
+      <ellipse cx="720" cy="80" rx="900" ry="180" fill="rgba(0,0,0,.08)"/>
+
+      <!-- Pegunungan belakang -->
+      <polygon points="0,260 180,80 360,200 540,60 720,180 900,50 1080,170 1260,70 1440,200 1440,420 0,420" fill="rgba(0,0,0,.18)"/>
+      <!-- Pegunungan depan -->
+      <polygon points="0,300 200,140 400,240 600,120 800,220 1000,100 1200,200 1440,140 1440,420 0,420" fill="rgba(0,0,0,.25)"/>
+
+      <!-- Sawah - petak-petak -->
+      <rect x="0" y="320" width="1440" height="100" fill="rgba(0,0,0,.3)"/>
+      <!-- Petak sawah 1 -->
+      <path d="M0,340 L200,330 L200,380 L0,390 Z" fill="rgba(52,160,80,.25)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M210,328 L420,318 L420,368 L210,378 Z" fill="rgba(45,140,70,.2)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M430,318 L640,310 L640,360 L430,368 Z" fill="rgba(52,160,80,.22)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M650,308 L860,300 L860,350 L650,360 Z" fill="rgba(40,130,65,.18)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M870,300 L1080,292 L1080,342 L870,352 Z" fill="rgba(52,160,80,.2)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M1090,292 L1300,285 L1300,335 L1090,345 Z" fill="rgba(45,140,70,.18)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <path d="M1310,285 L1440,280 L1440,330 L1310,340 Z" fill="rgba(52,160,80,.15)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+
+      <!-- Tanaman padi kecil-kecil -->
+      <g fill="rgba(100,210,120,.2)" stroke="none">
+        <!-- Baris padi -->
+        <g transform="translate(40,338)">
+          <ellipse cx="0" cy="0" rx="3" ry="8" transform="rotate(-10)"/>
+          <ellipse cx="14" cy="2" rx="3" ry="7" transform="rotate(8)"/>
+          <ellipse cx="28" cy="0" rx="3" ry="8" transform="rotate(-5)"/>
+          <ellipse cx="42" cy="1" rx="3" ry="7" transform="rotate(12)"/>
+          <ellipse cx="56" cy="0" rx="3" ry="8" transform="rotate(-8)"/>
+          <ellipse cx="70" cy="2" rx="3" ry="7" transform="rotate(6)"/>
+          <ellipse cx="84" cy="0" rx="3" ry="8" transform="rotate(-12)"/>
+          <ellipse cx="98" cy="1" rx="3" ry="7" transform="rotate(9)"/>
+          <ellipse cx="112" cy="0" rx="3" ry="8" transform="rotate(-4)"/>
+          <ellipse cx="126" cy="2" rx="3" ry="7" transform="rotate(10)"/>
+          <ellipse cx="140" cy="0" rx="3" ry="8" transform="rotate(-7)"/>
+          <ellipse cx="154" cy="1" rx="3" ry="7" transform="rotate(5)"/>
+        </g>
+        <g transform="translate(250,328)">
+          <ellipse cx="0" cy="0" rx="3" ry="8" transform="rotate(-10)"/>
+          <ellipse cx="14" cy="2" rx="3" ry="7" transform="rotate(8)"/>
+          <ellipse cx="28" cy="0" rx="3" ry="8" transform="rotate(-5)"/>
+          <ellipse cx="42" cy="1" rx="3" ry="7" transform="rotate(12)"/>
+          <ellipse cx="56" cy="0" rx="3" ry="8" transform="rotate(-8)"/>
+          <ellipse cx="70" cy="2" rx="3" ry="7" transform="rotate(6)"/>
+          <ellipse cx="84" cy="0" rx="3" ry="8" transform="rotate(-12)"/>
+          <ellipse cx="98" cy="1" rx="3" ry="7" transform="rotate(9)"/>
+          <ellipse cx="112" cy="0" rx="3" ry="8" transform="rotate(-4)"/>
+        </g>
+        <g transform="translate(500,318)">
+          <ellipse cx="0" cy="0" rx="3" ry="8" transform="rotate(-10)"/>
+          <ellipse cx="14" cy="2" rx="3" ry="7" transform="rotate(8)"/>
+          <ellipse cx="28" cy="0" rx="3" ry="8" transform="rotate(-5)"/>
+          <ellipse cx="42" cy="1" rx="3" ry="7" transform="rotate(12)"/>
+          <ellipse cx="56" cy="0" rx="3" ry="8" transform="rotate(-8)"/>
+          <ellipse cx="70" cy="2" rx="3" ry="7" transform="rotate(6)"/>
+          <ellipse cx="84" cy="0" rx="3" ry="8" transform="rotate(-12)"/>
+          <ellipse cx="98" cy="1" rx="3" ry="7" transform="rotate(9)"/>
+        </g>
+        <g transform="translate(800,310)">
+          <ellipse cx="0" cy="0" rx="3" ry="8" transform="rotate(-10)"/>
+          <ellipse cx="14" cy="2" rx="3" ry="7" transform="rotate(8)"/>
+          <ellipse cx="28" cy="0" rx="3" ry="8" transform="rotate(-5)"/>
+          <ellipse cx="42" cy="1" rx="3" ry="7" transform="rotate(12)"/>
+          <ellipse cx="56" cy="0" rx="3" ry="8" transform="rotate(-8)"/>
+          <ellipse cx="70" cy="2" rx="3" ry="7" transform="rotate(6)"/>
+          <ellipse cx="84" cy="0" rx="3" ry="8" transform="rotate(-12)"/>
+        </g>
+        <g transform="translate(1100,295)">
+          <ellipse cx="0" cy="0" rx="3" ry="8" transform="rotate(-10)"/>
+          <ellipse cx="14" cy="2" rx="3" ry="7" transform="rotate(8)"/>
+          <ellipse cx="28" cy="0" rx="3" ry="8" transform="rotate(-5)"/>
+          <ellipse cx="42" cy="1" rx="3" ry="7" transform="rotate(12)"/>
+          <ellipse cx="56" cy="0" rx="3" ry="8" transform="rotate(-8)"/>
+          <ellipse cx="70" cy="2" rx="3" ry="7" transform="rotate(6)"/>
+        </g>
+      </g>
+
+      <!-- Refleksi air sawah -->
+      <path d="M0,370 Q360,360 720,365 Q1080,370 1440,362 L1440,420 L0,420 Z"
+            fill="rgba(30,80,50,.35)"/>
+
+      <!-- Kilau air -->
+      <ellipse cx="200" cy="385" rx="60" ry="4" fill="rgba(255,255,255,.06)"/>
+      <ellipse cx="600" cy="380" rx="80" ry="3" fill="rgba(255,255,255,.05)"/>
+      <ellipse cx="1000" cy="383" rx="70" ry="4" fill="rgba(255,255,255,.06)"/>
+      <ellipse cx="1300" cy="378" rx="50" ry="3" fill="rgba(255,255,255,.05)"/>
+
+      <!-- Overlay gradien bawah -->
+      <rect x="0" y="300" width="1440" height="120"
+            fill="url(#fadeBottom)"/>
+      <defs>
+        <linearGradient id="fadeBottom" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(11,38,20,0)"/>
+          <stop offset="100%" stop-color="rgba(11,38,20,.55)"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- CARD UTAMA -->
   <div class="card">
-    <div class="brand">
+    <div class="card-head">
+      <div class="head-stripe"></div>
       <div class="emblem">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="SI-PETANI">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <polygon points="50,84 30,54 70,54" fill="#1F5C2E"/>
           <circle cx="50" cy="42" r="23" fill="#1F5C2E"/>
           <path d="M50,57 Q50,46 50,33" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round"/>
@@ -55,15 +441,107 @@
         </svg>
       </div>
       <div class="kicker">Sistem Informasi Peta Potensi Pertanian</div>
-      <h1>SI-PETANI</h1>
-      <p class="loc">BPP Unaaha, Kabupaten Konawe</p>
+      <div class="brand-name">SI-PETANI</div>
+      <div class="badge-instansi">
+        <span class="dot"></span>
+        BPP Unaaha · Kabupaten Konawe
+      </div>
     </div>
-    <div class="opts">
-      <a class="opt primary" href="https://bppunaaha.github.io/si-petani/"><span class="ic">🗺️</span><span class="tx"><span class="tt">Lihat Peta</span><span class="ds">Peta potensi pertanian (publik)</span></span><span class="ar">›</span></a>
-      <a class="opt" href="https://bppunaaha.github.io/si-petani/Editor.html"><span class="ic">🧑‍🌾</span><span class="tx"><span class="tt">Masuk sebagai Penyuluh</span><span class="ds">Editor peta &amp; data — perlu login</span></span><span class="ar">›</span></a>
-      <a class="opt" href="https://bppunaaha.github.io/si-petani/app.html"><span class="ic">📲</span><span class="tx"><span class="tt">Mode Input Data</span><span class="ds">Aplikasi input cepat penyuluh</span></span><span class="ar">›</span></a>
+
+    <div class="card-body">
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">Pilih Mode Akses</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="opts" id="opts">
+        <a class="opt primary disabled" id="optViewer" target="_top" href="#">
+          <span class="ic">🗺️</span>
+          <span class="tx">
+            <span class="tt">Lihat Peta Pertanian</span>
+            <span class="ds">Peta potensi & data pertanian publik</span>
+          </span>
+          <span class="ar">›</span>
+        </a>
+        <a class="opt disabled" id="optEditor" target="_top" href="#">
+          <span class="ic">🧑‍🌾</span>
+          <span class="tx">
+            <span class="tt">Masuk sebagai Penyuluh</span>
+            <span class="ds">Editor peta & data — perlu login</span>
+          </span>
+          <span class="ar">›</span>
+        </a>
+        <a class="opt disabled" id="optData" target="_top" href="#">
+          <span class="ic">📲</span>
+          <span class="tx">
+            <span class="tt">Mode Input Data</span>
+            <span class="ds">Aplikasi input cepat untuk penyuluh</span>
+          </span>
+          <span class="ar">›</span>
+        </a>
+      </div>
+
+      <div class="note" id="note">
+        <span class="spinner"></span>
+        <span>Menyiapkan tautan…</span>
+      </div>
     </div>
-    <div class="foot">BPP Unaaha 2026 · By Hasan Silondae</div>
+
+    <div class="foot">
+      <span>BPP Unaaha 2026</span>
+      <span class="foot-sep">·</span>
+      <span>Kementan RI</span>
+      <span class="foot-sep">·</span>
+      <span class="ver">v2.0</span>
+    </div>
   </div>
+
+  <script>
+    /* ===== PARTIKEL ANIMASI ===== */
+    (function(){
+      var container = document.getElementById('particles');
+      var count = 18;
+      for(var i=0;i<count;i++){
+        (function(i){
+          var p = document.createElement('div');
+          p.className = 'particle';
+          var size = 4 + Math.random()*10;
+          var left = Math.random()*100;
+          var delay = Math.random()*12;
+          var duration = 10 + Math.random()*16;
+          p.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+left+'%;bottom:'+(Math.random()*30)+'%;animation-delay:'+delay+'s;animation-duration:'+duration+'s;opacity:0';
+          container.appendChild(p);
+        })(i);
+      }
+    })();
+
+    /* ===== SETUP URL ===== */
+    function setUrls(base){
+      base = String(base || '');
+      var v = document.getElementById('optViewer');
+      var e = document.getElementById('optEditor');
+      var d = document.getElementById('optData');
+      var note = document.getElementById('note');
+
+      if(!base){
+        if(note) note.innerHTML = '⚠️ Gagal menyiapkan tautan. Muat ulang halaman.';
+        return;
+      }
+      var sep = base.indexOf('?') >= 0 ? '&' : '?';
+      v.href = base;
+      e.href = base + sep + 'mode=editor';
+      d.href = base + sep + 'mode=data';
+      [v, e, d].forEach(function(a){ a.classList.remove('disabled'); });
+      if(note) note.innerHTML = '<span style="color:var(--green-500);font-size:14px">✓</span> <span>Pilih salah satu untuk melanjutkan.</span>';
+    }
+
+    try{
+      google.script.run
+        .withSuccessHandler(setUrls)
+        .withFailureHandler(function(){ setUrls(''); })
+        .getAppUrl();
+    } catch(err){ setUrls(''); }
+  </script>
 </body>
 </html>
