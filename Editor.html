@@ -1,50 +1,28 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>SI-PETANI — BPP Unaaha</title>
-<link rel="icon" href="https://files.catbox.moe/bpvotk.png">
-<style>
-  html,body{ margin:0; height:100%; overflow:hidden; background:#10331C; font-family:system-ui,'Segoe UI',sans-serif; }
-  #frame{ position:fixed; inset:0; width:100%; height:100%; border:0; }
-  #splash{ position:fixed; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    background:linear-gradient(135deg,#163F22,#2C7A40); color:#fff; transition:opacity .5s ease; }
-  #splash.hide{ opacity:0; pointer-events:none; }
-  #splash .logo{ width:74px; height:74px; border-radius:18px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,.3); }
-  #splash .logo svg{ width:46px; height:46px; }
-  #splash h1{ font-size:24px; margin:8px 0 0; letter-spacing:.5px; font-weight:800; }
-  #splash p{ margin:0; font-size:13px; opacity:.85; }
-  #splash .dots{ display:flex; gap:6px; margin-top:4px; }
-  #splash .dots i{ width:8px; height:8px; border-radius:50%; background:#F6C453; animation:b 1s infinite; }
-  #splash .dots i:nth-child(2){ animation-delay:.15s; } #splash .dots i:nth-child(3){ animation-delay:.3s; }
-  @keyframes b{ 0%,100%{ transform:translateY(0); opacity:.5; } 50%{ transform:translateY(-6px); opacity:1; } }
-</style>
-</head>
-<body>
-  <div id="splash">
-    <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1F5C2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/>
-      </svg>
-    </div>
-    <h1>SI-PETANI</h1>
-    <p>Mode Editor — BPP Unaaha</p>
-    <div class="dots"><i></i><i></i><i></i></div>
-  </div>
-  <iframe id="frame" allow="geolocation *; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
-<script>
-  /* ============================================================
-     GANTI tulisan di dalam tanda kutip di bawah ini dengan
-     URL /exec aplikasi Anda (dari Apps Script > Manage deployments).
-     Contoh: "https://script.google.com/macros/s/AKfycbz.../exec"
-     ============================================================ */
-  var APP_URL = "https://script.google.com/macros/s/AKfycbzhuBxUy4QQiwuRk8lWq8KAgG0h2aa66yQ395k12-63f2TaIKVKX-qQy6wTrz76NZDxrw/exec";
+/* SI-PETANI Penyuluh — service worker sederhana (cache shell agar bisa di-install) */
+const CACHE = 'sipetani-penyuluh-v1';
+const SHELL = ['app.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
-  var f = document.getElementById('frame');
-  f.src = APP_URL + (APP_URL.indexOf("?")<0 ? "?" : "&") + "mode=editor";
-  f.addEventListener('load', function(){ document.getElementById('splash').classList.add('hide'); });
-  setTimeout(function(){ document.getElementById('splash').classList.add('hide'); }, 9000);
-</script>
-</body>
-</html>
+self.addEventListener('install', function (e) {
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
+});
+
+self.addEventListener('activate', function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+    }).then(function () { return self.clients.claim(); })
+  );
+});
+
+self.addEventListener('fetch', function (e) {
+  var url = e.request.url;
+  // Hanya tangani berkas shell di origin ini; konten aplikasi (script.google.com) selalu online.
+  if (e.request.method !== 'GET' || url.indexOf('script.google') >= 0 || url.indexOf('google.com') >= 0) return;
+  e.respondWith(
+    fetch(e.request).then(function (resp) {
+      var copy = resp.clone();
+      caches.open(CACHE).then(function (c) { try { c.put(e.request, copy); } catch (x) {} });
+      return resp;
+    }).catch(function () { return caches.match(e.request); })
+  );
+});
